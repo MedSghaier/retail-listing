@@ -14,10 +14,12 @@ const product = {
 };
 describe("Card", () => {
   it("should render without crashing", () => {
-    render(<Card product={product} />);
+    const { container } = render(<Card product={product} />);
     expect(screen.getByTestId("card")).toBeInTheDocument();
     expect(screen.getByTestId("card-title")).toBeInTheDocument();
     expect(screen.getByTestId("card-price")).toBeInTheDocument();
+
+    expect(container.firstChild).toMatchSnapshot();
   });
   it("should render a product correctly", () => {
     render(<Card product={product} />);

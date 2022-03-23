@@ -13,6 +13,7 @@ const Card = ({ product }) => {
           className="absolute z-0 top-0 left-0 w-full h-full scale-100 object-cover group-hover:scale-75 transition-transform ease-in-out duration-500"
           src={image_link ?? ""}
           alt={title ?? ""}
+          loading="lazy"
         />
         <div className="absolute top-2 right-2 z-[1]">
           <Chip label={`${gender}`.toUpperCase()} />
