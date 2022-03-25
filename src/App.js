@@ -1,49 +1,81 @@
+import { useMemo, useState } from "react";
+import { RiCloseLine } from "react-icons/ri";
+import Papa from "papaparse";
+import Button from "./components/Button/Button";
 import Card from "./components/Card/Card";
+import Modal from "./components/Modal/Modal";
+import SelectBox from "./components/SelectBox/SelectBox";
+import useFetch from "./hooks/useFetch";
+import ImageGallery from "./components/ImageGallery/ImageGallery";
 
 function App() {
-  const products = [
-    {
-      title: "Weekday THURSDAY Jeans Slim Fit black",
-      gtin: 2001007926858,
-      gender: "female",
-      sale_price: "39.95 EUR",
-      price: "39.95 EUR",
-      image_link:
-        "https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@12.4.jpg",
-      additional_image_link:
-        "https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@22.jpg, https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@21.jpg, https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@20.jpg, https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@19.jpg, https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@18.jpg",
-    },
-    {
-      title: "Weekday THURSDAY Jeans Slim Fit black",
-      gtin: 2001008772980,
-      gender: "female",
-      sale_price: "39.95 EUR",
-      price: "39.95 EUR",
-      image_link:
-        "https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@12.4.jpg",
-      additional_image_link:
-        "https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@22.jpg, https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@21.jpg, https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@20.jpg, https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@19.jpg, https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@18.jpg",
-    },
-    {
-      title: "Weekday THURSDAY Jeans Slim Fit black",
-      gtin: 2001008773000,
-      gender: "female",
-      sale_price: "39.95 EUR",
-      price: "39.95 EUR",
-      image_link:
-        "https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@12.4.jpg",
-      additional_image_link:
-        "https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@22.jpg, https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@21.jpg, https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@20.jpg, https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@19.jpg, https://mosaic01.ztat.net/vgs/media/large/WE/B2/1N/00/HQ/11/WEB21N00H-Q11@18.jpg",
-    },
+  const filterOptions = [
+    { id: 1, name: "All" },
+    { id: 2, name: "Female", value: "female" },
+    { id: 3, name: "Male", value: "male" },
+    { id: 4, name: "Unisex", value: "unisex" },
   ];
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const { data } = useFetch("/products.csv");
+  const productsList = useMemo(() => {
+    if (data) {
+      return Papa.parse(data, { delimiter: ",", header: true }).data.slice(
+        0,
+        500
+      );
+    }
+    return null;
+  }, [data]);
+
+  const productClickHandler = (product) => {
+    console.log(product.additional_image_link);
+    setSelectedProduct(product);
+    setIsOpen(true);
+  };
+
   return (
-    <div className="h-screen w-screen bg-gray-200 p-2">
-      <div className="h-full w-full rounded bg-white p-4 shadow-md">
-        <div className="grid gap-4 grid-cols-3">
-          {products.map((product, index) => (
-            <Card key={index} product={product} />
-          ))}
+    <div className="w-screen h-screen p-2 bg-gray-200">
+      <div className="w-full h-full p-4 bg-white rounded shadow-md">
+        <div className="grid grid-cols-2 gap-4 my-5">
+          {/* AutoComplete */}
+          <SelectBox
+            selected={filterOptions[0]}
+            options={filterOptions}
+            onChange={(selected) => console.log(selected)}
+          />
         </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 ">
+          {productsList &&
+            productsList.length > 0 &&
+            productsList.map((product) => (
+              <>
+                <Card
+                  key={product.gtin}
+                  product={product}
+                  clickHandler={productClickHandler}
+                />
+              </>
+            ))}
+        </div>
+        <Modal
+          isOpen={Boolean(isOpen && selectedProduct)}
+          title={`${selectedProduct?.title} - ${selectedProduct?.price}`}
+          onClose={() => {
+            setIsOpen(false);
+            setSelectedProduct(null);
+          }}
+        >
+          <ImageGallery
+            imageLinks={selectedProduct?.additional_image_link.split(", ")}
+          />
+          <div className="absolute top-2 right-3">
+            <Button onClick={() => setIsOpen(false)}>
+              <RiCloseLine />
+            </Button>
+          </div>
+        </Modal>
       </div>
     </div>
   );

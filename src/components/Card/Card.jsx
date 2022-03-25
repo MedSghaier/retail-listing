@@ -1,16 +1,20 @@
 import Chip from "../Chip/Chip";
 
-const Card = ({ product }) => {
-  const { image_link, title, sale_price, price, gender } = product;
+const Card = ({ product, clickHandler }) => {
+  const { image_link, title, price, gender } = product;
 
   return (
-    <div
-      className="rounded shadow-sm relative bg-white block"
+    <button
+      className="relative block bg-white rounded shadow-sm"
       data-testid="card"
+      tabIndex={0}
+      onClick={() => clickHandler(product)}
     >
       <div className="relative pb-[75%] overflow-hidden group cursor-pointer">
+        {/* More about browser image lazy loading */}
+        {/* https://web.dev/browser-level-image-lazy-loading/ */}
         <img
-          className="absolute z-0 top-0 left-0 w-full h-full scale-100 object-cover group-hover:scale-75 transition-transform ease-in-out duration-500"
+          className="absolute top-0 left-0 z-0 object-cover w-full h-full transition-transform duration-500 ease-in-out scale-100 group-hover:scale-75"
           src={image_link ?? ""}
           alt={title ?? ""}
           loading="lazy"
@@ -22,7 +26,7 @@ const Card = ({ product }) => {
       <div className="p-4">
         {title && (
           <h2
-            className="text-lg font-lato mb-2 font-bold cursor-default"
+            className="mb-2 text-lg font-bold cursor-default font-lato"
             data-testid="card-title"
           >
             {title}
@@ -30,14 +34,14 @@ const Card = ({ product }) => {
         )}
         {price && (
           <h3
-            className="text-sm font-lato text-gray-600"
+            className="text-sm text-gray-600 font-lato"
             data-testid="card-price"
           >
             {price}
           </h3>
         )}
       </div>
-    </div>
+    </button>
   );
 };
 

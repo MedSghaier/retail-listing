@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button Render Should render correctly 1`] = `
+<div>
+  <button
+    class="text-base w-8 h-8 inline-flex flex-shrink-0 rounded-full items-center justify-center leading-1 transition duration-200 focus:outline-none bg-white shadow-md text-secondary border border-transparent ring-2 ring-transparent ring-offset-1 ring-offset-transparent hover:bg-gray-200 active:bg-gray-200 active:shadow-none active:border-gray-500 active:ring-transparent focus-visible:shadow-none focus-visible:ring-gray-400 focus-visible:ring-offset-white"
+  >
+    Hello
+  </button>
+</div>
+`;
