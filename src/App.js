@@ -22,7 +22,7 @@ function App() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data } = useFetch("/products.csv");
+  const { data } = useFetch(`${process.env.PUBLIC_URL}/products.csv`);
   const productsList = useMemo(() => {
     if (data) {
       // Filter by gender if filter has a value
