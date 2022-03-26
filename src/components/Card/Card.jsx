@@ -1,14 +1,14 @@
+import classNames from "classnames";
 import Chip from "../Chip/Chip";
 
 const Card = ({ product, clickHandler }) => {
-  const { image_link, title, price, gender } = product;
+  const { image_link, title, price, gender, sale_price } = product;
 
+  const hasDiscount = Boolean(sale_price < price);
   return (
-    <button
+    <div
       className="relative block bg-white rounded shadow-sm"
       data-testid="card"
-      tabIndex={0}
-      onClick={() => clickHandler(product)}
     >
       <div className="relative pb-[75%] overflow-hidden group cursor-pointer">
         {/* More about browser image lazy loading */}
@@ -18,6 +18,7 @@ const Card = ({ product, clickHandler }) => {
           src={image_link ?? ""}
           alt={title ?? ""}
           loading="lazy"
+          onClick={() => clickHandler(product)}
         />
         <div className="absolute top-2 right-2 z-[1]">
           <Chip label={`${gender}`.toUpperCase()} />
@@ -34,14 +35,17 @@ const Card = ({ product, clickHandler }) => {
         )}
         {price && (
           <h3
-            className="text-sm text-gray-600 font-lato"
+            className="text-sm font-bold text-gray-600 font-lato"
             data-testid="card-price"
           >
-            {price}
+            {hasDiscount && <span>{sale_price} | </span>}
+            <span className={classNames(hasDiscount ? "line-through" : "")}>
+              {price}
+            </span>
           </h3>
         )}
       </div>
-    </button>
+    </div>
   );
 };
 
