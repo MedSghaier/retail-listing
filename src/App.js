@@ -48,8 +48,8 @@ function App() {
   };
 
   return (
-    <div className="w-screen h-screen p-2 bg-gray-200">
-      <div className="w-full h-full p-4 bg-white rounded shadow-md">
+    <div className="w-screen h-screen p-2 overflow-hidden bg-gray-200">
+      <div className="w-full h-full p-4 overflow-auto bg-white rounded shadow-md">
         <div className="grid grid-cols-2 gap-4 my-5">
           {/* AutoComplete */}
           <SelectBox
