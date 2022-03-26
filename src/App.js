@@ -7,11 +7,12 @@ import Modal from "./components/Modal/Modal";
 import SelectBox from "./components/SelectBox/SelectBox";
 import useFetch from "./hooks/useFetch";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
+import SwitchBox from "./components/SwitchBox/SwitchBox";
 
 function App() {
   const filterOptions = useMemo(
     () => [
-      { id: 1, name: "All", value: "" },
+      { id: 1, name: "All", value: null },
       { id: 2, name: "Female", value: "female" },
       { id: 3, name: "Male", value: "male" },
       { id: 4, name: "Unisex", value: "unisex" },
@@ -21,14 +22,26 @@ function App() {
   const [filter, setFilter] = useState(filterOptions[0]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [showOnSale, setShowOnSale] = useState(false);
 
   const { data } = useFetch(`${process.env.PUBLIC_URL}/products.csv`);
+
   const productsList = useMemo(() => {
     if (data) {
       // Filter by gender if filter has a value
-      if (filter.value !== "") {
+      if (filter.value && !showOnSale) {
         return Papa.parse(data, { delimiter: ",", header: true })
           .data.filter((product) => product.gender === filter.value)
+          .slice(0, 100);
+      }
+      if (showOnSale) {
+        return Papa.parse(data, { delimiter: ",", header: true })
+          .data.filter((product) =>
+            filter.value
+              ? product.sale_price < product.price &&
+                product.gender === filter.value
+              : product.sale_price < product.price
+          )
           .slice(0, 100);
       }
       // Return all products
@@ -38,7 +51,7 @@ function App() {
       );
     }
     return null;
-  }, [data, filter.value]);
+  }, [data, filter.value, showOnSale]);
 
   const productClickHandler = (product) => {
     // Set selected product
@@ -50,12 +63,17 @@ function App() {
   return (
     <div className="w-screen h-screen p-2 overflow-hidden bg-gray-200">
       <div className="w-full h-full p-4 overflow-auto bg-white rounded shadow-md">
-        <div className="grid grid-cols-2 gap-4 my-5">
+        <div className="grid items-end grid-cols-2 gap-4 my-5">
           {/* AutoComplete */}
           <SelectBox
             selected={filter}
             options={filterOptions}
             onChange={(selected) => setFilter(selected)}
+          />
+          <SwitchBox
+            label="Sales"
+            enabled={showOnSale}
+            onChange={setShowOnSale}
           />
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 ">
