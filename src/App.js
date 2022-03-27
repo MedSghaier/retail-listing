@@ -90,24 +90,26 @@ function App() {
   return (
     <div className="w-screen h-screen p-2 overflow-hidden bg-gray-200">
       <div className="w-full h-full p-4 overflow-auto bg-white rounded shadow-md">
-        <div className="grid items-end grid-cols-3 gap-4 my-5">
-          <SearchField
-            options={productsList ?? []}
-            value={searchQuery}
-            onChange={setSearchQuery}
-            onSelect={onSearchFieldSelection}
-            placeholder="Search"
-          />
-          <SelectBox
-            selected={filter}
-            options={genderFilterOptions}
-            onChange={(selected) => setFilter(selected)}
-          />
-          <SwitchBox
-            label="Sales"
-            enabled={showOnSale}
-            onChange={setShowOnSale}
-          />
+        <div className="sticky z-50 px-4 py-5 -mx-4 bg-white -top-6">
+          <div className="grid items-end grid-cols-3 gap-4">
+            <SearchField
+              options={productsList ?? []}
+              value={searchQuery}
+              onChange={setSearchQuery}
+              onSelect={onSearchFieldSelection}
+              placeholder="Search"
+            />
+            <SelectBox
+              selected={filter}
+              options={genderFilterOptions}
+              onChange={(selected) => setFilter(selected)}
+            />
+            <SwitchBox
+              label="Sales"
+              enabled={showOnSale}
+              onChange={setShowOnSale}
+            />
+          </div>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 ">
           {productsList &&
