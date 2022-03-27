@@ -5,7 +5,7 @@ function Modal({ isOpen = false, onClose, children, title }) {
     <Dialog
       open={isOpen}
       onClose={onClose}
-      className="fixed inset-0 z-10 overflow-y-auto"
+      className="fixed inset-0 z-50 overflow-y-auto"
       data-testid="modal"
     >
       <div className="flex items-center justify-center min-h-screen">

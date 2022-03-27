@@ -90,7 +90,7 @@ function App() {
   return (
     <div className="w-screen h-screen p-2 overflow-hidden bg-gray-200">
       <div className="w-full h-full p-4 overflow-auto bg-white rounded shadow-md">
-        <div className="sticky z-50 px-4 py-5 -mx-4 bg-white -top-6">
+        <div className="sticky z-30 px-4 py-5 -mx-4 bg-white -top-6">
           <div className="grid items-end grid-cols-3 gap-4">
             <SearchField
               options={productsList ?? []}
