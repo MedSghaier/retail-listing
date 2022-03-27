@@ -1,16 +1,22 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { RiCloseLine } from "react-icons/ri";
-import Papa from "papaparse";
+
+// Components
 import Button from "./components/Button/Button";
 import Card from "./components/Card/Card";
 import Modal from "./components/Modal/Modal";
 import SelectBox from "./components/SelectBox/SelectBox";
-import useFetch from "./hooks/useFetch";
+import SearchField from "./components/SearchField/SearchField";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
 import SwitchBox from "./components/SwitchBox/SwitchBox";
-
+// Utils
+import parser from "./utils/parser";
+// Hooks
+import useFetch from "./hooks/useFetch";
 function App() {
-  const filterOptions = useMemo(
+  // Gender select optionsList
+  // Needs to be memoised to object referential integrity
+  const genderFilterOptions = useMemo(
     () => [
       { id: 1, name: "All", value: null },
       { id: 2, name: "Female", value: "female" },
@@ -19,55 +25,82 @@ function App() {
     ],
     []
   );
-  const [filter, setFilter] = useState(filterOptions[0]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isOpen, setIsOpen] = useState(false);
+  // Gender filter state
+  const [filter, setFilter] = useState(genderFilterOptions[0]);
+  // Currently selected product state
+  const [clickedProduct, setClickedProduct] = useState(null);
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // Sales switch state
   const [showOnSale, setShowOnSale] = useState(false);
+  // Search field state
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { data } = useFetch(`${process.env.PUBLIC_URL}/products.csv`);
 
   const productsList = useMemo(() => {
     if (data) {
-      // Filter by gender if filter has a value
+      // Filter by gender if sales filter has a value
       if (filter.value && !showOnSale) {
-        return Papa.parse(data, { delimiter: ",", header: true })
-          .data.filter((product) => product.gender === filter.value)
+        return parser(data)
+          .filter(
+            (product) =>
+              product.gender === filter.value &&
+              product.title.toLowerCase().startsWith(searchQuery.toLowerCase())
+          )
           .slice(0, 100);
       }
       if (showOnSale) {
-        return Papa.parse(data, { delimiter: ",", header: true })
-          .data.filter((product) =>
+        return parser(data)
+          .filter((product) =>
             filter.value
               ? product.sale_price < product.price &&
-                product.gender === filter.value
-              : product.sale_price < product.price
+                product.gender === filter.value &&
+                product.title
+                  .toLowerCase()
+                  .startsWith(searchQuery.toLowerCase())
+              : product.sale_price < product.price &&
+                product.title
+                  .toLowerCase()
+                  .startsWith(searchQuery.toLowerCase())
           )
           .slice(0, 100);
       }
       // Return all products
-      return Papa.parse(data, { delimiter: ",", header: true }).data.slice(
-        0,
-        100
-      );
+      return parser(data)
+        .filter((product) =>
+          product.title.toLowerCase().startsWith(searchQuery.toLowerCase())
+        )
+        .slice(0, 100);
     }
     return null;
-  }, [data, filter.value, showOnSale]);
+  }, [data, filter.value, showOnSale, searchQuery]);
 
   const productClickHandler = (product) => {
     // Set selected product
-    setSelectedProduct(product);
+    setClickedProduct(product);
     // Open modal with with the selected product
-    setIsOpen(true);
+    setIsModalOpen(true);
   };
 
+  const onSearchFieldSelection = (product) => {
+    setSearchQuery(product.title);
+    console.log(product);
+  };
   return (
     <div className="w-screen h-screen p-2 overflow-hidden bg-gray-200">
       <div className="w-full h-full p-4 overflow-auto bg-white rounded shadow-md">
-        <div className="grid items-end grid-cols-2 gap-4 my-5">
-          {/* AutoComplete */}
+        <div className="grid items-end grid-cols-3 gap-4 my-5">
+          <SearchField
+            options={productsList ?? []}
+            value={searchQuery}
+            onChange={setSearchQuery}
+            onSelect={onSearchFieldSelection}
+            placeholder="Search"
+          />
           <SelectBox
             selected={filter}
-            options={filterOptions}
+            options={genderFilterOptions}
             onChange={(selected) => setFilter(selected)}
           />
           <SwitchBox
@@ -90,18 +123,18 @@ function App() {
             ))}
         </div>
         <Modal
-          isOpen={Boolean(isOpen && selectedProduct)}
-          title={`${selectedProduct?.title} - ${selectedProduct?.price}`}
+          isOpen={Boolean(isModalOpen && clickedProduct)}
+          title={`${clickedProduct?.title} - ${clickedProduct?.price}`}
           onClose={() => {
-            setIsOpen(false);
-            setSelectedProduct(null);
+            setIsModalOpen(false);
+            setClickedProduct(null);
           }}
         >
           <ImageGallery
-            imageLinks={selectedProduct?.additional_image_link.split(", ")}
+            imageLinks={clickedProduct?.additional_image_link.split(", ")}
           />
           <div className="absolute top-2 right-3">
-            <Button onClick={() => setIsOpen(false)}>
+            <Button onClick={() => setIsModalOpen(false)}>
               <RiCloseLine />
             </Button>
           </div>
