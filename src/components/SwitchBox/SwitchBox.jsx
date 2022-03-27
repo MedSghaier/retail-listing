@@ -12,8 +12,10 @@ const SwitchBox = ({ label, enabled, onChange }) => {
           className={`${
             enabled ? "bg-red-600" : "bg-gray-200"
           } relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-100`}
+          data-testid="switch-button"
         >
           <span
+            data-testid={`switch-${enabled ? "on" : "off"}`}
             className={`${
               enabled ? "translate-x-6" : "translate-x-1"
             } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}

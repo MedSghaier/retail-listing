@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SwitchBox Render Should render off by default 1`] = `
+<div>
+  <div
+    class="flex items-center"
+  >
+    <label
+      class="mr-4"
+      id="headlessui-label-1"
+    >
+      Test
+    </label>
+    <button
+      aria-labelledby="headlessui-label-1"
+      class="bg-gray-200 relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-100"
+      data-testid="switch-button"
+      id="headlessui-switch-2"
+      role="switch"
+      tabindex="0"
+      type="button"
+    >
+      <span
+        class="translate-x-1 inline-block w-4 h-4 transform bg-white rounded-full transition-transform"
+        data-testid="switch-off"
+      />
+    </button>
+  </div>
+</div>
+`;
