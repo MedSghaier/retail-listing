@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState, useRef, useLayoutEffect, useEffect } from "react";
 import { RiCloseLine } from "react-icons/ri";
 import { VariableSizeList as List } from "react-window";
 
@@ -40,6 +40,8 @@ function App() {
   const [showOnSale, setShowOnSale] = useState(false);
   // Search field state
   const [searchQuery, setSearchQuery] = useState("");
+  // Container width state
+  const [containerWidth, setContainerWidth] = useState(1);
 
   const { data } = useFetch(`${process.env.PUBLIC_URL}/products.csv`);
 
@@ -84,6 +86,19 @@ function App() {
     setSearchQuery(product.title);
   };
 
+  useLayoutEffect(() => {
+    if (paperWrapperRef.current) {
+      // Render the list on window resize
+      window.addEventListener("resize", (e) => {
+        setContainerWidth(e.target.innerWidth);
+      });
+    }
+
+    return () => {
+      window.removeEventListener("resize", () => {});
+    };
+  }, [paperWrapperRef.current]);
+
   return (
     <div className="w-screen h-screen p-2 overflow-hidden bg-gray-200">
       <div
@@ -114,7 +129,7 @@ function App() {
             />
           </div>
         </div>
-        {productsList && productsList.length > 0 && (
+        {productsList && productsList.length > 0 && containerWidth > 0 && (
           <List
             height={paperWrapperRef?.current?.clientHeight}
             itemCount={arrayToMatrix(productsList)?.length}
@@ -126,7 +141,11 @@ function App() {
                 {arrayToMatrix(productsList) &&
                   arrayToMatrix(productsList).length &&
                   arrayToMatrix(productsList)[index]?.map((item) => (
-                    <div className="flex-grow-0 w-1/3 h-full" key={item.gtin}>
+                    <div
+                      className="flex-grow-0 w-1/3 h-full"
+                      key={item.gtin}
+                      data-testid="product-item"
+                    >
                       <Card product={item} clickHandler={productClickHandler} />
                     </div>
                   ))}
