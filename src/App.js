@@ -118,7 +118,7 @@ function App() {
           <List
             height={paperWrapperRef?.current?.clientHeight}
             itemCount={arrayToMatrix(productsList)?.length}
-            itemSize={() => Math.ceil(paperWrapperRef.current.clientWidth / 3)}
+            itemSize={() => 400}
             width={paperWrapperRef?.current?.clientWidth}
           >
             {({ index, style }) => (
