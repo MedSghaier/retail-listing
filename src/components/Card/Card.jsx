@@ -7,14 +7,14 @@ const Card = ({ product, clickHandler }) => {
   const hasDiscount = Boolean(sale_price < price);
   return (
     <div
-      className="relative block bg-white rounded shadow-sm"
       data-testid="card"
+      className="relative block h-full bg-white rounded shadow-sm"
     >
-      <div className="relative pb-[75%] overflow-hidden group cursor-pointer">
+      <div className="relative h-[250px] overflow-hidden group cursor-pointer">
         {/* More about browser image lazy loading */}
         {/* https://web.dev/browser-level-image-lazy-loading/ */}
         <img
-          className="absolute top-0 left-0 z-0 object-cover w-full h-full transition-transform duration-500 ease-in-out scale-100 group-hover:scale-75"
+          className="z-0 block object-contain w-full h-full mx-auto transition-transform duration-500 ease-in-out scale-100 group-hover:scale-75"
           src={image_link ?? ""}
           alt={title ?? ""}
           loading="lazy"
